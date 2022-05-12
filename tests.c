@@ -13,6 +13,8 @@ void test_all() {
 	test_utilites();
 	test_settings();
 	test_text_driver();
+	test_lexer();
+	test_list();
 	ushort max_count = get_test_count();
 	ushort count = get_true_test_count();
 	printf("-> performed %u tests from %u.\n", count, max_count);

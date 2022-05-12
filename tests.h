@@ -15,6 +15,8 @@
 #include "tests_settings.h"
 #include "tests_error.h"
 #include "tests_utilites.h"
+#include "tests_lexer.h"
+#include "tests_list.h"
 
 void test_all();
 

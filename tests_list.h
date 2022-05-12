@@ -4,17 +4,15 @@
 * (C) 2022 year.
 */
 
-#ifndef CONSOLE_H
+#ifndef TESTS_LIST_H
 
-#define CONSOLE_H
-
+#define TESTS_LIST_H
 #include <stdio.h>
 #include <string.h>
 #include "globals.h"
-#include "locals.h"
-#include "script_runner.h"
-#include "path.h"
+#include "test.h"
+#include "list.h"
 
-void start_stdin_listening();
+void test_list();
 
 #endif

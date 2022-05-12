@@ -20,7 +20,7 @@ void _add_cmd_to_history(char* script) {
 
 void start_stdin_listening() {
 	while (true) {
-		printf("> ");
+		printf("(%s) > ", get_cur_dir());
 		char* input[MAX_STDIN_LEN] = { '\0' };
 		if (gets(input) == NULL)
 		{
@@ -36,7 +36,7 @@ void start_stdin_listening() {
 		else if (input[0] == '+') {
 			ushort current_pos = (_next_pos - 1) % MAX_CMD_HISTORY;
 			strcpy(input, _cmd_history[current_pos]);
-			printf("> %s\n", _cmd_history[current_pos]);
+			printf("(%s) > %s\n", get_cur_dir(), _cmd_history[current_pos]);
 		}
 		_add_cmd_to_history(input);
 		run_script(input);

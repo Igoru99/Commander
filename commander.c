@@ -12,10 +12,11 @@
 #include "console.h"
 #include "text_driver.h"
 #include "script_runner.h"
+#include "path.h"
 
 void main(int argc, char** argv) {
 	if (argc == 2) {
-		printf("> exec %s", argv[1]);
+		printf("(%s) > exec %s", get_cur_dir(), argv[1]);
 		bool result = init_text_driver_from_file(argv[1], "r");
 		if (result == false)
 		{

@@ -14,6 +14,8 @@ const char* const _MESSAGES_ENG[] = {
 	{"Enter \'+\' and tap <Enter> for runnning this command.\n"},
 	{"Input entry error.\n"},
 	{"Unexcepted symbol.\n"},
+	{"Not enough memory.\n"},
+	{"Unexcepted end of file.\n"},
 };
 
 
@@ -25,6 +27,8 @@ const char* const _MESSAGES_RUS[] = {
 	{"Для выполнения этой команды введите \'+\' и нажмите <Enter>.\n"},
 	{"При вводе строки произошла ошибка.\n"},
 	{"Неожиданный символ.\n"},
+	{"Недостаточно памяти.\n"},
+	{"Неожиданный конец файла.\n"},
 };
 
 enum LANGUAGES _current_lang = DEFAULT_LANG;
