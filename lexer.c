@@ -90,7 +90,7 @@ char _next_ch() {
 		return '\0';
 }
 
-Token* get_keyword_token(enum TOKENS token_type) {
+Token* _get_keyword_token(enum TOKENS token_type) {
 	Token* token = malloc(sizeof(Token));
 	if (token == NULL)
 	{
@@ -104,7 +104,7 @@ Token* get_keyword_token(enum TOKENS token_type) {
 	return token;
 }
 
-Token* get_str_token(enum TOKENS token_type) {
+Token* _get_str_token(enum TOKENS token_type) {
 	Token* token = malloc(sizeof(Token));
 	if (token == NULL)
 	{
@@ -124,7 +124,7 @@ Token* get_str_token(enum TOKENS token_type) {
 	return token;
 }
 
-Token* convert_to_keyword(Token* token) {
+Token* _convert_to_keyword(Token* token) {
 	if (token == NULL)
 		return NULL;
 	if (strcmp(token->value, "true") == 0)
@@ -153,14 +153,14 @@ Token* convert_to_keyword(Token* token) {
 	return token;
 }
 
-Token* get_num_token() {
+Token* _get_num_token() {
 	Token* token = malloc(sizeof(Token));
 	if (token == NULL)
 		return NULL;
 	token->line_number = _fixed_line_number;
 	token->line_pos = _fixed_line_pos;
 	token->value = copy_int(atoi(_buffer));
-	if (_buffer == NULL) {
+	if (token->value == NULL) {
 		add_error(0, 0, get_msg(MESSAGES_TYPE_ERROR_OUT_MEMORY));
 		free(token);
 		return NULL;
@@ -181,37 +181,37 @@ _lexer_func_result _end_construction(enum LEXER_STATES lexer_state, enum TOKENS 
 	case LEXER_SEP:
 	case LEXER_RIGHT_BRACKET:
 		_lexer_state = lexer_state;
-		_result.token = get_keyword_token(token_type);
+		_result.token = _get_keyword_token(token_type);
 		return _result;
 	case LEXER_FLAG:
 		_lexer_state = lexer_state;
-		_stack = get_keyword_token(token_type);
-		_result.token = get_str_token(TOKEN_FLAG);
+		_stack = _get_keyword_token(token_type);
+		_result.token = _get_str_token(TOKEN_FLAG);
 		return _result;
 	case LEXER_LOCAL_VAR_NAME:
 		_lexer_state = lexer_state;
-		_stack = get_keyword_token(token_type);
-		_result.token = get_str_token(TOKEN_LOCAL_VAR_NAME);
+		_stack = _get_keyword_token(token_type);
+		_result.token = _get_str_token(TOKEN_LOCAL_VAR_NAME);
 		return _result;
 	case LEXER_GLOBAL_VAR_NAME:
 		_lexer_state = lexer_state;
-		_stack = get_keyword_token(token_type);
-		_result.token = get_str_token(TOKEN_GLOBAL_VAR_NAME);
+		_stack = _get_keyword_token(token_type);
+		_result.token = _get_str_token(TOKEN_GLOBAL_VAR_NAME);
 		return _result;
 	case LEXER_MARK_NAME:
 		_lexer_state = lexer_state;
-		_stack = get_keyword_token(token_type);
-		_result.token = get_str_token(TOKEN_MARK_NAME);
+		_stack = _get_keyword_token(token_type);
+		_result.token = _get_str_token(TOKEN_MARK_NAME);
 		return _result;
 	case LEXER_NUM:
 		_lexer_state = lexer_state;
-		_stack = get_keyword_token(token_type);
-		_result.token = get_num_token();
+		_stack = _get_keyword_token(token_type);
+		_result.token = _get_num_token();
 		return _result;
 	case LEXER_START_STR:
 		_lexer_state = lexer_state;
-		_stack = get_keyword_token(token_type);
-		_result.token = convert_to_keyword(get_str_token(TOKEN_STR));
+		_stack = _get_keyword_token(token_type);
+		_result.token = _convert_to_keyword(_get_str_token(TOKEN_STR));
 		return _result;
 	default:
 		if (token_type == TOKEN_EOF)
@@ -253,7 +253,7 @@ _lexer_func_result _process_ch_var_directive() {
 		_buffer = append_char(_buffer, '@');
 		_line_pos++;
 		_lexer_state = LEXER_LOCAL_VAR_NAME;
-		_result.token = get_keyword_token(TOKEN_OP_EQUALS);
+		_result.token = _get_keyword_token(TOKEN_OP_EQUALS);
 		return _result;
 	case LEXER_OP_RIGHT_DIR:
 		_fixed_line_number = _line_number;
@@ -261,7 +261,7 @@ _lexer_func_result _process_ch_var_directive() {
 		_buffer = append_char(_buffer, '@');
 		_line_pos++;
 		_lexer_state = LEXER_LOCAL_VAR_NAME;
-		_result.token = get_keyword_token(TOKEN_RIGHT_DIR);
+		_result.token = _get_keyword_token(TOKEN_RIGHT_DIR);
 		return _result;
 	case LEXER_START:
 	case LEXER_WHITESPACE:
@@ -337,12 +337,12 @@ _lexer_func_result _process_ch_quote() {
 	switch (_lexer_state) {
 	case LEXER_OP_EQUALS:
 		_lexer_state = LEXER_START_QUOTE_STR;
-		_result.token = get_keyword_token(TOKEN_OP_EQUALS);
+		_result.token = _get_keyword_token(TOKEN_OP_EQUALS);
 		_line_pos++;
 		return _result;
 	case LEXER_OP_RIGHT_DIR:
 		_lexer_state = LEXER_START_QUOTE_STR;
-		_result.token = get_keyword_token(TOKEN_RIGHT_DIR);
+		_result.token = _get_keyword_token(TOKEN_RIGHT_DIR);
 		_line_pos++;
 		return _result;
 	case LEXER_START:
@@ -363,7 +363,7 @@ _lexer_func_result _process_ch_quote() {
 		return _result;
 	case LEXER_START_QUOTE_STR:
 		_lexer_state = LEXER_END_QUOTE_STR;
-		_result.token = convert_to_keyword(get_str_token(TOKEN_STR));
+		_result.token = _convert_to_keyword(_get_str_token(TOKEN_STR));
 		_line_pos++;
 		return _result;
 	default:
@@ -380,12 +380,12 @@ _lexer_func_result _process_ch_whitespace() {
 	switch (_lexer_state) {
 	case LEXER_OP_EQUALS:
 		_lexer_state = LEXER_WHITESPACE;
-		_result.token = get_keyword_token(TOKEN_OP_EQUALS);
+		_result.token = _get_keyword_token(TOKEN_OP_EQUALS);
 		_line_pos++;
 		return _result;
 	case LEXER_OP_RIGHT_DIR:
 		_lexer_state = LEXER_WHITESPACE;
-		_result.token = get_keyword_token(TOKEN_RIGHT_DIR);
+		_result.token = _get_keyword_token(TOKEN_RIGHT_DIR);
 		_line_pos++;
 		return _result;
 	case LEXER_START:
@@ -406,32 +406,32 @@ _lexer_func_result _process_ch_whitespace() {
 		return _result;
 	case LEXER_FLAG:
 		_lexer_state = LEXER_WHITESPACE;
-		_result.token = get_str_token(TOKEN_FLAG);
+		_result.token = _get_str_token(TOKEN_FLAG);
 		_line_pos++;
 		return _result;
 	case LEXER_LOCAL_VAR_NAME:
 		_lexer_state = LEXER_WHITESPACE;
-		_result.token = get_str_token(TOKEN_LOCAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_LOCAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_GLOBAL_VAR_NAME:
 		_lexer_state = LEXER_WHITESPACE;
-		_result.token = get_str_token(TOKEN_GLOBAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_GLOBAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_MARK_NAME:
 		_lexer_state = LEXER_WHITESPACE;
-		_result.token = get_str_token(TOKEN_MARK_NAME);
+		_result.token = _get_str_token(TOKEN_MARK_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_NUM:
 		_lexer_state = LEXER_WHITESPACE;
-		_result.token = get_num_token();
+		_result.token = _get_num_token();
 		_line_pos++;
 		return _result;
 	case LEXER_START_STR:
 		_lexer_state = LEXER_WHITESPACE;
-		_result.token = convert_to_keyword(get_str_token(TOKEN_STR));
+		_result.token = _convert_to_keyword(_get_str_token(TOKEN_STR));
 		_line_pos++;
 		return _result;
 	case LEXER_END_QUOTE_STR:
@@ -458,32 +458,32 @@ _lexer_func_result _process_ch_add() {
 	switch (_lexer_state) {
 	case LEXER_OP_EQUALS:
 		_lexer_state = LEXER_OP_ADD;
-		_stack = get_keyword_token(TOKEN_OP_ADD);
-		_result.token = get_str_token(TOKEN_OP_EQUALS);
+		_stack = _get_keyword_token(TOKEN_OP_ADD);
+		_result.token = _get_str_token(TOKEN_OP_EQUALS);
 		_line_pos++;
 		return _result;
 	case LEXER_LOCAL_VAR_NAME:
 		_lexer_state = LEXER_OP_ADD;
-		_stack = get_keyword_token(TOKEN_OP_ADD);
-		_result.token = get_str_token(TOKEN_LOCAL_VAR_NAME);
+		_stack = _get_keyword_token(TOKEN_OP_ADD);
+		_result.token = _get_str_token(TOKEN_LOCAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_GLOBAL_VAR_NAME:
 		_lexer_state = LEXER_OP_ADD;
-		_stack = get_keyword_token(TOKEN_OP_ADD);
-		_result.token = get_str_token(TOKEN_GLOBAL_VAR_NAME);
+		_stack = _get_keyword_token(TOKEN_OP_ADD);
+		_result.token = _get_str_token(TOKEN_GLOBAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_NUM:
 		_lexer_state = LEXER_OP_ADD;
-		_stack = get_keyword_token(TOKEN_OP_ADD);
-		_result.token = get_num_token();
+		_stack = _get_keyword_token(TOKEN_OP_ADD);
+		_result.token = _get_num_token();
 		_line_pos++;
 		return _result;
 	case LEXER_START_STR:
 		_lexer_state = LEXER_OP_ADD;
-		_stack = get_keyword_token(TOKEN_OP_ADD);
-		_result.token = convert_to_keyword(get_str_token(TOKEN_STR));
+		_stack = _get_keyword_token(TOKEN_OP_ADD);
+		_result.token = _convert_to_keyword(_get_str_token(TOKEN_STR));
 		_line_pos++;
 		return _result;
 	case LEXER_START_QUOTE_STR:
@@ -501,7 +501,7 @@ _lexer_func_result _process_ch_add() {
 	case LEXER_BOOL_OP_OR:
 	case LEXER_END_QUOTE_STR:
 		_lexer_state = LEXER_OP_ADD;
-		_result.token = get_keyword_token(TOKEN_OP_ADD);
+		_result.token = _get_keyword_token(TOKEN_OP_ADD);
 		_line_pos++;
 		return _result;
 	default:
@@ -518,26 +518,26 @@ _lexer_func_result _process_ch_sub() {
 	switch (_lexer_state) {
 	case LEXER_OP_EQUALS:
 		_lexer_state = LEXER_OP_SUB;
-		_stack = get_keyword_token(TOKEN_OP_SUB);
-		_result.token = get_keyword_token(TOKEN_OP_EQUALS);
+		_stack = _get_keyword_token(TOKEN_OP_SUB);
+		_result.token = _get_keyword_token(TOKEN_OP_EQUALS);
 		_line_pos++;
 		return _result;
 	case LEXER_LOCAL_VAR_NAME:
 		_lexer_state = LEXER_OP_SUB;
-		_stack = get_keyword_token(TOKEN_OP_SUB);
-		_result.token = get_str_token(TOKEN_LOCAL_VAR_NAME);
+		_stack = _get_keyword_token(TOKEN_OP_SUB);
+		_result.token = _get_str_token(TOKEN_LOCAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_GLOBAL_VAR_NAME:
 		_lexer_state = LEXER_OP_SUB;
-		_stack = get_keyword_token(TOKEN_OP_SUB);
-		_result.token = get_str_token(TOKEN_GLOBAL_VAR_NAME);
+		_stack = _get_keyword_token(TOKEN_OP_SUB);
+		_result.token = _get_str_token(TOKEN_GLOBAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_NUM:
 		_lexer_state = LEXER_OP_SUB;
-		_stack = get_keyword_token(TOKEN_OP_SUB);
-		_result.token = get_num_token();
+		_stack = _get_keyword_token(TOKEN_OP_SUB);
+		_result.token = _get_num_token();
 		_line_pos++;
 		return _result;
 	case LEXER_START_STR:
@@ -566,7 +566,7 @@ _lexer_func_result _process_ch_sub() {
 	case LEXER_BOOL_OP_NOT:
 	case LEXER_BOOL_OP_OR:
 		_lexer_state = LEXER_OP_SUB;
-		_result.token = get_keyword_token(TOKEN_OP_SUB);
+		_result.token = _get_keyword_token(TOKEN_OP_SUB);
 		_line_pos++;
 		return _result;
 	default:
@@ -586,7 +586,7 @@ _lexer_func_result _process_ch_num(char c) {
 		_fixed_line_pos = _line_pos;
 		_lexer_state = LEXER_NUM;
 		_buffer = append_char(_buffer, c);
-		_result.token = get_keyword_token(TOKEN_OP_EQUALS);
+		_result.token = _get_keyword_token(TOKEN_OP_EQUALS);
 		_line_pos++;
 		return _result;
 	case LEXER_NUM:
@@ -658,7 +658,7 @@ _lexer_func_result _process_ch_letter(char c) {
 		_fixed_line_pos = _line_pos;
 		_lexer_state = LEXER_START_STR;
 		_buffer = append_char(_buffer, c);
-		_result.token = get_keyword_token(TOKEN_OP_EQUALS);
+		_result.token = _get_keyword_token(TOKEN_OP_EQUALS);
 		_line_pos++;
 		return _result;
 	case LEXER_START:
@@ -711,7 +711,7 @@ _lexer_func_result _process_ch_ascii_symbol(char c) {
 		_fixed_line_pos = _line_pos;
 		_lexer_state = LEXER_START_STR;
 		_buffer = append_char(_buffer, c);
-		_result.token = get_keyword_token(TOKEN_OP_EQUALS);
+		_result.token = _get_keyword_token(TOKEN_OP_EQUALS);
 		_line_pos++;
 		return _result;
 	case LEXER_START:
@@ -781,27 +781,27 @@ _lexer_func_result _process_ch_equals() {
 	switch (_lexer_state) {
 	case LEXER_BOOL_OP_NOT:
 		_lexer_state = LEXER_BOOL_OP_NOT;
-		_result.token = get_keyword_token(TOKEN_BOOL_OP_NOT_EQUALS);
+		_result.token = _get_keyword_token(TOKEN_BOOL_OP_NOT_EQUALS);
 		_line_pos++;
 		return _result;
 	case LEXER_OP_EQUALS:
 		_lexer_state = LEXER_BOOL_OP_EQUALS;
-		_result.token = get_keyword_token(TOKEN_BOOL_OP_EQUALS);
+		_result.token = _get_keyword_token(TOKEN_BOOL_OP_EQUALS);
 		_line_pos++;
 		return _result;
 	case LEXER_LOCAL_VAR_NAME:
 		_lexer_state = LEXER_OP_EQUALS;
-		_result.token = get_str_token(TOKEN_LOCAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_LOCAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_GLOBAL_VAR_NAME:
 		_lexer_state = LEXER_OP_EQUALS;
-		_result.token = get_str_token(TOKEN_GLOBAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_GLOBAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_NUM:
 		_lexer_state = LEXER_OP_EQUALS;
-		_result.token = get_num_token();
+		_result.token = _get_num_token();
 		_line_pos++;
 		return _result;
 	case LEXER_END_QUOTE_STR:
@@ -831,12 +831,12 @@ _lexer_func_result _process_ch_right_dir() {
 	switch (_lexer_state) {
 	case LEXER_LOCAL_VAR_NAME:
 		_lexer_state = LEXER_OP_RIGHT_DIR;
-		_result.token = get_str_token(TOKEN_LOCAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_LOCAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_GLOBAL_VAR_NAME:
 		_lexer_state = LEXER_OP_RIGHT_DIR;
-		_result.token = get_str_token(TOKEN_GLOBAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_GLOBAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_END_QUOTE_STR:
@@ -853,7 +853,7 @@ _lexer_func_result _process_ch_right_dir() {
 		return _result;
 	case LEXER_OP_RIGHT_DIR:
 		_lexer_state = LEXER_OP_DOUBLE_RIGHT_DIR;
-		_result.token = get_keyword_token(TOKEN_DOUBLE_RIGHT_DIR);
+		_result.token = _get_keyword_token(TOKEN_DOUBLE_RIGHT_DIR);
 		_line_pos++;
 		return _result;
 	default:
@@ -870,17 +870,17 @@ _lexer_func_result _process_ch_and() {
 	switch (_lexer_state) {
 	case LEXER_LOCAL_VAR_NAME:
 		_lexer_state = LEXER_OP_AND;
-		_result.token = get_str_token(TOKEN_LOCAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_LOCAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_GLOBAL_VAR_NAME:
 		_lexer_state = LEXER_OP_AND;
-		_result.token = get_str_token(TOKEN_GLOBAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_GLOBAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_NUM:
 		_lexer_state = LEXER_OP_AND;
-		_result.token = get_num_token();
+		_result.token = _get_num_token();
 		_line_pos++;
 		return _result;
 	case LEXER_WHITESPACE:
@@ -898,7 +898,7 @@ _lexer_func_result _process_ch_and() {
 		return _result;
 	case LEXER_OP_AND:
 		_lexer_state = LEXER_BOOL_OP_AND;
-		_result.token = get_keyword_token(TOKEN_BOOL_OP_AND);
+		_result.token = _get_keyword_token(TOKEN_BOOL_OP_AND);
 		_line_pos++;
 		return _result;
 	default:
@@ -915,17 +915,17 @@ _lexer_func_result _process_ch_or() {
 	switch (_lexer_state) {
 	case LEXER_LOCAL_VAR_NAME:
 		_lexer_state = LEXER_OP_OR;
-		_result.token = get_str_token(TOKEN_LOCAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_LOCAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_GLOBAL_VAR_NAME:
 		_lexer_state = LEXER_OP_OR;
-		_result.token = get_str_token(TOKEN_GLOBAL_VAR_NAME);
+		_result.token = _get_str_token(TOKEN_GLOBAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_NUM:
 		_lexer_state = LEXER_OP_OR;
-		_result.token = get_num_token();
+		_result.token = _get_num_token();
 		_line_pos++;
 		return _result;
 	case LEXER_WHITESPACE:
@@ -943,7 +943,7 @@ _lexer_func_result _process_ch_or() {
 		return _result;
 	case LEXER_OP_OR:
 		_lexer_state = LEXER_BOOL_OP_OR;
-		_result.token = get_keyword_token(TOKEN_BOOL_OP_OR);
+		_result.token = _get_keyword_token(TOKEN_BOOL_OP_OR);
 		_line_pos++;
 		return _result;
 	default:
@@ -970,7 +970,7 @@ _lexer_func_result _process_ch_left_bracket() {
 	case LEXER_BOOL_OP_AND:
 	case LEXER_BOOL_OP_OR:
 		_lexer_state = LEXER_LEFT_BRACKET;
-		_result.token = get_keyword_token(TOKEN_LEFT_BRACKET);
+		_result.token = _get_keyword_token(TOKEN_LEFT_BRACKET);
 		_line_pos++;
 		return _result;
 	case LEXER_START_STR:
@@ -993,27 +993,27 @@ _lexer_func_result _process_ch_right_bracket() {
 	switch (_lexer_state) {
 	case LEXER_LOCAL_VAR_NAME:
 		_lexer_state = LEXER_RIGHT_BRACKET;
-		_stack = get_keyword_token(TOKEN_RIGHT_BRACKET);
-		_result.token = get_str_token(TOKEN_LOCAL_VAR_NAME);
+		_stack = _get_keyword_token(TOKEN_RIGHT_BRACKET);
+		_result.token = _get_str_token(TOKEN_LOCAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_GLOBAL_VAR_NAME:
 		_lexer_state = LEXER_RIGHT_BRACKET;
-		_stack = get_keyword_token(TOKEN_RIGHT_BRACKET);
-		_result.token = get_str_token(TOKEN_GLOBAL_VAR_NAME);
+		_stack = _get_keyword_token(TOKEN_RIGHT_BRACKET);
+		_result.token = _get_str_token(TOKEN_GLOBAL_VAR_NAME);
 		_line_pos++;
 		return _result;
 	case LEXER_NUM:
 		_lexer_state = LEXER_RIGHT_BRACKET;
-		_stack = get_keyword_token(TOKEN_RIGHT_BRACKET);
-		_result.token = get_num_token();
+		_stack = _get_keyword_token(TOKEN_RIGHT_BRACKET);
+		_result.token = _get_num_token();
 		_line_pos++;
 		return _result;
 	case LEXER_END_QUOTE_STR:
 	case LEXER_WHITESPACE:
 	case LEXER_RIGHT_BRACKET:
 		_lexer_state = LEXER_RIGHT_BRACKET;
-		_result.token = get_keyword_token(TOKEN_RIGHT_BRACKET);
+		_result.token = _get_keyword_token(TOKEN_RIGHT_BRACKET);
 		_line_pos++;
 		return _result;
 	case	LEXER_START_STR:
