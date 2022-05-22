@@ -44,7 +44,7 @@ void free_dict(dict* dict) {
 
 /*Find item*/
 
-static item* find_item(dict* dict, const char* key) {
+item* find_item(dict* dict, const char* key) {
 	if (dict == NULL || key == NULL || dict->count == 0)
 		return NULL;
 	int count = 0;
