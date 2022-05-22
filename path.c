@@ -6,7 +6,7 @@
 
 #include "path.h"
 
-const char* _cur_dir = "C://";
+static const char* _cur_dir = "C://";
 
 const char* get_cur_dir() {
 	return _cur_dir;

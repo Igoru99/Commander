@@ -8,10 +8,10 @@
 
 #include "text_driver.h"
 
-char* _str = NULL;
-ushort _pos = 0;
-FILE* _file = NULL;
-int _file_len = 0;
+static char* _str = NULL;
+static ushort _pos = 0;
+static FILE* _file = NULL;
+static int _file_len = 0;
 
 char next_ch_file() {
 	char c = '\0';

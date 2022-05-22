@@ -17,7 +17,7 @@ typedef struct {
 }node;
 
 typedef struct {
-	void* first_node;
+	node* first_node;
 	ushort count;
 }list;
 

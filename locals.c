@@ -6,7 +6,7 @@
 
 #include "locals.h"
 
-const char* const _MESSAGES_ENG[] = {
+static const char* const _MESSAGES_ENG[] = {
 	{"Loading script error.\n"},
 	{"Tap <Enter> to exit.\n"},
 	{"Enter \'help'\ for more details.\n"},
@@ -19,7 +19,7 @@ const char* const _MESSAGES_ENG[] = {
 };
 
 
-const char* const _MESSAGES_RUS[] = {
+static const char* const _MESSAGES_RUS[] = {
 	{"При загрузке скрипта произошла ошибка.\n"},
 	{"Нажмите <Enter> для выхода.\n"},
 	{"Введите \'help'\ для получения справки.\n"},
@@ -31,7 +31,7 @@ const char* const _MESSAGES_RUS[] = {
 	{"Неожиданный конец файла.\n"},
 };
 
-enum LANGUAGES _current_lang = DEFAULT_LANG;
+static enum LANGUAGES _current_lang = DEFAULT_LANG;
 
 void set_lang(enum LANGUAGES lang) {
 	_current_lang = lang;

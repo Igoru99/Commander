@@ -53,21 +53,21 @@ typedef struct {
 	enum LEXER_FUNC_RESULT result_type;
 }_lexer_func_result;
 
-ushort _line_number = 1;
-ushort _line_pos = 1;
-ushort _fixed_line_number = 1;
-ushort _fixed_line_pos = 1;
+static ushort _line_number = 1;
+static ushort _line_pos = 1;
+static ushort _fixed_line_number = 1;
+static ushort _fixed_line_pos = 1;
 
-char(*_func_ptr)(void) = NULL;
-char* _buffer = NULL;
+static char(*_func_ptr)(void) = NULL;
+static char* _buffer = NULL;
 
-enum LEXER_STATES _lexer_state = LEXER_START;
-Token* _stack = NULL;
+static enum LEXER_STATES _lexer_state = LEXER_START;
+static Token* _stack = NULL;
 
-enum TOKENS _last_token_type;
-char _last_ch;
+static enum TOKENS _last_token_type;
+static char _last_ch;
 
-void free_token(Token* token) {
+static void free_token(Token* token) {
 	if (token == NULL)
 		return;
 	switch (token->token_type) {
@@ -83,14 +83,14 @@ void free_token(Token* token) {
 	free(token);
 }
 
-char _next_ch() {
+static char _next_ch() {
 	if (_func_ptr != NULL)
 		return _func_ptr();
 	else
 		return '\0';
 }
 
-Token* _get_keyword_token(enum TOKENS token_type) {
+static Token* _get_keyword_token(enum TOKENS token_type) {
 	Token* token = malloc(sizeof(Token));
 	if (token == NULL)
 	{
@@ -104,7 +104,7 @@ Token* _get_keyword_token(enum TOKENS token_type) {
 	return token;
 }
 
-Token* _get_str_token(enum TOKENS token_type) {
+static Token* _get_str_token(enum TOKENS token_type) {
 	Token* token = malloc(sizeof(Token));
 	if (token == NULL)
 	{
@@ -124,7 +124,7 @@ Token* _get_str_token(enum TOKENS token_type) {
 	return token;
 }
 
-Token* _convert_to_keyword(Token* token) {
+static Token* _convert_to_keyword(Token* token) {
 	if (token == NULL)
 		return NULL;
 	if (strcmp(token->value, "true") == 0)
@@ -153,7 +153,7 @@ Token* _convert_to_keyword(Token* token) {
 	return token;
 }
 
-Token* _get_num_token() {
+static Token* _get_num_token() {
 	Token* token = malloc(sizeof(Token));
 	if (token == NULL)
 		return NULL;
@@ -170,7 +170,7 @@ Token* _get_num_token() {
 	return token;
 }
 
-_lexer_func_result _end_construction(enum LEXER_STATES lexer_state, enum TOKENS token_type) {
+static _lexer_func_result _end_construction(enum LEXER_STATES lexer_state, enum TOKENS token_type) {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -223,11 +223,11 @@ _lexer_func_result _end_construction(enum LEXER_STATES lexer_state, enum TOKENS 
 	}
 }
 
-_lexer_func_result _process_ch_EOF() {
+static _lexer_func_result _process_ch_EOF() {
 	return _end_construction(LEXER_EOF, TOKEN_EOF);
 }
 
-_lexer_func_result _process_ch_sep(char sep) {
+static _lexer_func_result _process_ch_sep(char sep) {
 	if (sep == '\n') {
 		_line_pos = 1;
 		_line_number++;
@@ -242,7 +242,7 @@ _lexer_func_result _process_ch_sep(char sep) {
 	return _end_construction(LEXER_SEP, TOKEN_SEP);
 }
 
-_lexer_func_result _process_ch_var_directive() {
+static _lexer_func_result _process_ch_var_directive() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -301,7 +301,7 @@ _lexer_func_result _process_ch_var_directive() {
 	}
 }
 
-_lexer_func_result _process_ch_colon() {
+static _lexer_func_result _process_ch_colon() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -330,7 +330,7 @@ _lexer_func_result _process_ch_colon() {
 	}
 }
 
-_lexer_func_result _process_ch_quote() {
+static _lexer_func_result _process_ch_quote() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -373,7 +373,7 @@ _lexer_func_result _process_ch_quote() {
 	}
 }
 
-_lexer_func_result _process_ch_whitespace() {
+static _lexer_func_result _process_ch_whitespace() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -451,7 +451,7 @@ _lexer_func_result _process_ch_whitespace() {
 	}
 }
 
-_lexer_func_result _process_ch_add() {
+static _lexer_func_result _process_ch_add() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -511,7 +511,7 @@ _lexer_func_result _process_ch_add() {
 	}
 }
 
-_lexer_func_result _process_ch_sub() {
+static _lexer_func_result _process_ch_sub() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -576,7 +576,7 @@ _lexer_func_result _process_ch_sub() {
 	}
 }
 
-_lexer_func_result _process_ch_num(char c) {
+static _lexer_func_result _process_ch_num(char c) {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -648,7 +648,7 @@ _lexer_func_result _process_ch_num(char c) {
 	}
 }
 
-_lexer_func_result _process_ch_letter(char c) {
+static _lexer_func_result _process_ch_letter(char c) {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -701,7 +701,7 @@ _lexer_func_result _process_ch_letter(char c) {
 	}
 }
 
-_lexer_func_result _process_ch_ascii_symbol(char c) {
+static _lexer_func_result _process_ch_ascii_symbol(char c) {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -746,7 +746,7 @@ _lexer_func_result _process_ch_ascii_symbol(char c) {
 	}
 }
 
-_lexer_func_result _process_ch_not() {
+static _lexer_func_result _process_ch_not() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -774,7 +774,7 @@ _lexer_func_result _process_ch_not() {
 	}
 }
 
-_lexer_func_result _process_ch_equals() {
+static _lexer_func_result _process_ch_equals() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -824,7 +824,7 @@ _lexer_func_result _process_ch_equals() {
 	}
 }
 
-_lexer_func_result _process_ch_right_dir() {
+static _lexer_func_result _process_ch_right_dir() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -863,7 +863,7 @@ _lexer_func_result _process_ch_right_dir() {
 	}
 }
 
-_lexer_func_result _process_ch_and() {
+static _lexer_func_result _process_ch_and() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -908,7 +908,7 @@ _lexer_func_result _process_ch_and() {
 	}
 }
 
-_lexer_func_result _process_ch_or() {
+static _lexer_func_result _process_ch_or() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -953,7 +953,7 @@ _lexer_func_result _process_ch_or() {
 	}
 }
 
-_lexer_func_result _process_ch_left_bracket() {
+static _lexer_func_result _process_ch_left_bracket() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -986,7 +986,7 @@ _lexer_func_result _process_ch_left_bracket() {
 	}
 }
 
-_lexer_func_result _process_ch_right_bracket() {
+static _lexer_func_result _process_ch_right_bracket() {
 	_lexer_func_result _result;
 	_result.result_type = LEXER_FUNC_RESULT_TOKEN;
 
@@ -1029,7 +1029,7 @@ _lexer_func_result _process_ch_right_bracket() {
 	}
 }
 
-Token* next_token() {
+static Token* _next_token() {
 
 	_lexer_func_result result;
 	Token* temp;
@@ -1372,7 +1372,7 @@ Token* next_token() {
 	}
 }
 
-void _init_start_lexer_state(char(*func_ptr)(void)) {
+static void _init_start_lexer_state(char(*func_ptr)(void)) {
 	_line_number = 1;
 	_line_pos = 1;
 	_fixed_line_number = 1;
@@ -1401,7 +1401,7 @@ list* tokenize(char(*next_ch_fn(void))) {
 
 	Token* current_token = NULL;
 
-	while ((current_token = next_token()) != NULL && current_token->token_type != TOKEN_EOF) {
+	while ((current_token = _next_token()) != NULL && current_token->token_type != TOKEN_EOF) {
 		add_item(tokens_list, current_token);
 	}
 

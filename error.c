@@ -6,7 +6,7 @@
 
 #include "error.h"
 
-ErrorInfo _err;
+static ErrorInfo _err;
 
 ErrorInfo get_error() {
 	ErrorInfo cur_err = _err;

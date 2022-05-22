@@ -13,7 +13,7 @@ typedef struct {
 	bool is_error;
 }_Value_Result;
 
-char* _get_str() {
+static char* _get_str() {
 	char* str = '\0';
 	char c = '\0';
 	while ((c = next_ch_file()) != '\'' && c != '\0') {
@@ -31,7 +31,7 @@ char* _get_str() {
 	return str;
 }
 
-short _get_number(char start_number) {
+static short _get_number(char start_number) {
 	char* str = NULL;
 	char c = '\0';
 	str = append_char(str, start_number);
@@ -47,7 +47,7 @@ short _get_number(char start_number) {
 	return number;
 }
 
-char* _get_key() {
+static char* _get_key() {
 	char* str = NULL;
 	char c = '\0';
 	while ((c = next_ch_file()) != '=' && c != '\0') {
@@ -64,7 +64,7 @@ char* _get_key() {
 	return str;
 }
 
-_Value_Result _get_value() {
+static _Value_Result _get_value() {
 	_Value_Result result;
 	result.is_error = true;
 	result.str = NULL;
@@ -85,7 +85,7 @@ _Value_Result _get_value() {
 	return result;
 }
 
-bool _parse_line(dict* dict) {
+static bool _parse_line(dict* dict) {
 	char* key = NULL;
 	_Value_Result value;
 	key = _get_key();
@@ -108,7 +108,7 @@ bool _parse_line(dict* dict) {
 	return result;
 }
 
-dict* _parse_file() {
+static dict* _parse_file() {
 	dict* dict = init_dict();
 	if (dict == NULL)
 		return NULL;
@@ -125,7 +125,7 @@ dict* get_settings() {
 	return dict;
 }
 
-char* _item_to_str(item* item, bool is_last_item) {
+static char* _item_to_str(item* item, bool is_last_item) {
 	char* valueS = NULL;
 	if (item->value_type == DICT_DATATYPE_STRING)
 		valueS = item->value;

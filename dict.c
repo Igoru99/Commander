@@ -18,7 +18,7 @@ dict* init_dict() {
 	return new_dict;
 }
 
-void _free_item(item* current_item) {
+static void _free_item(item* current_item) {
 	free(current_item->value);
 	free(current_item->key);
 	free(current_item);
@@ -44,7 +44,7 @@ void free_dict(dict* dict) {
 
 /*Find item*/
 
-item* find_item(dict* dict, const char* key) {
+static item* find_item(dict* dict, const char* key) {
 	if (dict == NULL || key == NULL || dict->count == 0)
 		return NULL;
 	int count = 0;
@@ -61,7 +61,7 @@ item* find_item(dict* dict, const char* key) {
 
 /*Add item*/
 
-item* _init_item(const char* key, void* value, enum DICT_DATATYPES data_type) {
+static item* _init_item(const char* key, void* value, enum DICT_DATATYPES data_type) {
 	item* new_pair = malloc(sizeof(item));
 	if (new_pair == NULL)
 		return NULL;
@@ -72,7 +72,7 @@ item* _init_item(const char* key, void* value, enum DICT_DATATYPES data_type) {
 	return new_pair;
 }
 
-void _insert_item(dict* dict, item* new_pair) {
+static void _insert_item(dict* dict, item* new_pair) {
 	if (dict->count == 0) {
 		dict->first_ptr = new_pair;
 		dict->last_ptr = new_pair;

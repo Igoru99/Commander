@@ -8,10 +8,10 @@
 #include "console.h"
 
 // index 0 - current cmd
-char _cmd_history[MAX_CMD_HISTORY][MAX_STDIN_LEN] = { '\0' };
-ushort _next_pos = 0;
+static char _cmd_history[MAX_CMD_HISTORY][MAX_STDIN_LEN] = { '\0' };
+static ushort _next_pos = 0;
 
-void _add_cmd_to_history(char* script) {
+static void _add_cmd_to_history(char* script) {
 	for (ushort i = MAX_CMD_HISTORY - 1; i > 0; i--)
 		strcpy(_cmd_history[i], _cmd_history[i - 1]);
 	strcpy(_cmd_history[0], script);
